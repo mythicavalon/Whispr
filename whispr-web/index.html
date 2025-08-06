@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whispr - Send Hidden Messages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z'/></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                    Whispr
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">Send Hidden Messages</p>
+                <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Tab Navigation -->
+        <div class="mb-8">
+            <nav class="flex space-x-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button id="encodeTab" class="tab-button active flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors">
+                    🔒 Encode
+                </button>
+                <button id="decodeTab" class="tab-button flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors">
+                    🔓 Decode
+                </button>
+            </nav>
+        </div>
+
+        <!-- Encode Section -->
+        <div id="encodeSection" class="tab-content">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Hide a Secret Message</h2>
+                
+                <!-- Image Upload -->
+                <div class="space-y-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Upload Cover Image (PNG/JPG)
+                    </label>
+                    <div id="encodeDropZone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            <span class="font-medium">Click to upload</span> or drag and drop
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-500">PNG, JPG up to 4MB</p>
+                    </div>
+                    <input type="file" id="encodeImageInput" accept="image/png,image/jpeg" class="hidden">
+                    <div id="encodeImagePreview" class="hidden">
+                        <img id="encodePreviewImg" class="max-w-full max-h-64 rounded-lg shadow-md mx-auto">
+                        <p id="encodeImageInfo" class="text-sm text-gray-500 dark:text-gray-400 text-center mt-2"></p>
+                    </div>
+                </div>
+
+                <!-- Secret Message -->
+                <div class="space-y-4">
+                    <label for="secretMessage" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Secret Message
+                    </label>
+                    <textarea id="secretMessage" rows="4" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="Enter your secret message here..."></textarea>
+                    <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                        <span id="messageLength">0 characters</span>
+                        <span id="capacityInfo"></span>
+                    </div>
+                </div>
+
+                <!-- Password (Optional) -->
+                <div class="space-y-4">
+                    <label for="encodePassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Password (Optional)
+                    </label>
+                    <input type="password" id="encodePassword" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="Leave empty for default encryption">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Password provides additional security for your message</p>
+                </div>
+
+                <!-- Generate Button -->
+                <button id="generateBtn" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    🔒 Generate Secret Image
+                </button>
+
+                <!-- Result -->
+                <div id="encodeResult" class="hidden space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Your Secret Image</h3>
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                        <img id="resultImage" class="max-w-full max-h-64 rounded-lg shadow-md mx-auto mb-4">
+                        <div class="flex gap-3">
+                            <button id="downloadBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                📥 Download Image
+                            </button>
+                            <button id="copyBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                📋 Copy to Clipboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decode Section -->
+        <div id="decodeSection" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Reveal Hidden Message</h2>
+                
+                <!-- Image Upload -->
+                <div class="space-y-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Upload Secret Image
+                    </label>
+                    <div id="decodeDropZone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            <span class="font-medium">Click to upload</span> or drag and drop
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-500">Image with hidden message</p>
+                    </div>
+                    <input type="file" id="decodeImageInput" accept="image/png,image/jpeg" class="hidden">
+                    <div id="decodeImagePreview" class="hidden">
+                        <img id="decodePreviewImg" class="max-w-full max-h-64 rounded-lg shadow-md mx-auto">
+                        <p id="decodeImageInfo" class="text-sm text-gray-500 dark:text-gray-400 text-center mt-2"></p>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="space-y-4">
+                    <label for="decodePassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Password (if used)
+                    </label>
+                    <input type="password" id="decodePassword" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="Enter password if one was used">
+                </div>
+
+                <!-- Reveal Button -->
+                <button id="revealBtn" class="w-full bg-secondary hover:bg-secondary/90 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    🔓 Reveal Message
+                </button>
+
+                <!-- Result -->
+                <div id="decodeResult" class="hidden space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Hidden Message</h3>
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                        <div id="revealedMessage" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap min-h-20"></div>
+                        <button id="copyMessageBtn" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                            📋 Copy Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <span class="text-gray-900 dark:text-white">Processing...</span>
+            </div>
+        </div>
+
+        <!-- Error Messages -->
+        <div id="errorAlert" class="hidden fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <span id="errorMessage"></span>
+                <button id="closeError" class="ml-3 text-red-500 hover:text-red-700">×</button>
+            </div>
+        </div>
+
+        <!-- Success Messages -->
+        <div id="successAlert" class="hidden fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span id="successMessage"></span>
+                <button id="closeSuccess" class="ml-3 text-green-500 hover:text-green-700">×</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <div class="text-center text-sm text-gray-600 dark:text-gray-400">
+                <p class="mb-2">🔒 All processing happens locally in your browser. No data is sent to any server.</p>
+                <p>Built with ❤️ for privacy and security.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
